@@ -1,0 +1,98 @@
+vertex_buffer<Type Container::*... Members>
+    list of types, their strides and offsets
+    name of a VBO
+    functions to write Container objects into the VBO
+    
+    TODO: should this object really own the VBO? It is fine for now.
+    Uploading random data may be difficult if we allow arbitrary strides and offsets
+    Maybe have a separate struct_buffer class
+
+vertex_array<class... Attributes>
+    a mapping between one or multiple vertex_buffers and a program
+    list of attributes, their VBO, types, offsets and indices
+    name of a VAO
+    
+    VBO names can only be known at runtime
+    ideally we can use the member pointers of vertex_buffers to specify the mapping
+    
+mesh<class... Attributes>
+    index of first primtive
+    number of primitives
+    
+program<class... Attributes, class... Uniforms>
+    list of shaders
+    list of typed uniforms and their locations
+    list of typed attributes and their indices
+    can be called with parameters and a vertex array that fit the uniforms and attributes
+    
+instance<program<class... Attributes, class... Uniforms>>
+    represents an instance in OpenGL
+    program specific values for attributes
+    offset into SSB with instance data
+    setters for Attributes write into SSB
+    
+    TODO: is it possible to allow changing instance data without requiring instance to store a pointer to the multi_draw_arrays_indirect_call it is in?
+    Just implement it as linked list for now.
+    
+multi_draw_arrays_indirect_call<program<class... Attributes, class... Uniforms>> : renderable
+    name of a VBO holding an array of DrawCommands
+    values for Uniforms
+    name of a VAO
+    
+    The advantage of sharing VAOs between calls is small. It's easier to have each call manage a unique VAO.
+    
+object
+    knows the number and type of its calls
+    given an object we want to be able to edit its calls
+    destroying an object should also destroy its calls
+        this could require re-ordering instances of the same mesh to keep them packed
+        we need to be able to change the offset of an instance in an object given another object with an instance to the same program
+        
+pass
+    a composition consists of passes in a certain order
+    destroying a pass should remove it from the composition
+    the parameters of passes will rarely change
+    it doesn't really matter where in memory they are stored
+    
+    if the composition only stores pointers to the pass objects, passes could just as well form a linked list
+    
+
+it would be cool if we could have exactly one call to glMultiDrawArraysIndirect per program and pass combination
+calls become instances of their mesh
+instances of a mesh should be packed, other data doesn't have to
+
+order:
+    for each pass
+        for each program
+            set pass information in program
+            for each call
+                set call information and VAO
+                glMultiDrawArraysIndirect
+                //for each draw command
+                //    for each instance
+                
+data:
+    pass-specific data
+        passed as uniforms
+        contains
+            projection and view matrices
+    call-specific data
+        passed as uniforms
+        contains
+            textures
+    instance-specific data
+        passed as vertex attribute with divisor 1
+        contains
+            model matrix
+    vertex-specific data
+        passed as vertex attribute
+        contains
+            positions, normals, uvs
+                
+                
+solutions
+    call objects store pointers to the call_list they are in so they can remove themselv on destruction
+    
+    call names are just indices into a list that stores the indices of the packed data
+        maybe this can be done with an index buffer (doesn't look like that's the case)
+        

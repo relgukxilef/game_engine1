@@ -1,0 +1,53 @@
+
+objects
+    ge1 has several objects that store some kind of state and frequently wrap or reference OpenGL objects. 
+    
+    attribute_array
+        stores the offset to a member in a attribute_pack_array
+        
+    attribute_pack_array
+        stores a reference to a vbo, a list of attribute_arrays and a stride
+
+    vertex_array
+        stores a list of attributes, their vbos, offsets and strides
+        stores the number of vertices and maybe the index of the first one
+        
+        attribute_pack_arrays could be stored as intrusive list
+        
+    vertex_array_indirect_instanced
+        stores pointers to a vertex_array holding the vertices, a vertex_array holding instance information and a reference to a vbo holding a command list
+        
+    vertex_array_indirect
+        same as vertex_array_indirect but the instance count values are only allowed to be 0 or 1
+        
+managers
+    These wrap objects to allow higher lever operations on it.
+    
+    dynamic_vertex_array
+        allows insertion and removal of elements into a vertex_array
+        
+    dynamic_vertex_array_indirect
+        allows insertion and removal of meshes, vertices into meshes and instances of meshes
+        each instance of a mesh has its own entry in the command list
+        the instance counter may only be 0 or 1 and operates as visibility flag
+        
+    dynamic_vertex_array_indirect_instanced
+        allows insertion and removal of meshes, vertices into meshes and instances of meshes
+        
+        As long as attributes are never moved to different VBOs the VAO doesn't need to be updated. Therefore it's not necessary to have this class keep a VAO updated.
+        
+passes
+    These can be inserted into a composition to trigger certain actions at specific steps in the rendering process.
+    
+    draw_indirect_call
+        Stores a pointer to a vertex_array_indirect and renders them.
+        
+    draw_indirect_instanced_call
+        Stores a pointer to a vertex_array_indirect_instanced and renders them.
+        
+    sphere_frustum_culling
+        Stores pointers to one attribute_array containing model matrices, one containing radii and one containing draw commands.
+        When executed it writes 1s into the instanceCount of draw commands that are visible and 0s into those that are invisible.
+        
+    sphere_frustum_culling_instanced
+        Same as sphere_frustum_culling but produces a stream compacted array of indices to visible instances and a count of visible instances for each draw command.
