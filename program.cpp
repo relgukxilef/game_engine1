@@ -46,6 +46,9 @@ namespace ge1 {
         }
 
         shader(shader&& other) {
+            if (name != 0) {
+                glDeleteShader(name);
+            }
             name = other.name;
             other.name = 0;
         }
@@ -111,7 +114,6 @@ namespace ge1 {
         for (auto& s : shaders) {
             if (s.name != 0) {
                 glDetachShader(name, s.name);
-                glDeleteShader(s.name);
             }
         }
 
