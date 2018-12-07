@@ -74,13 +74,17 @@ int main() {
 
     mesh.push_back(buffer);
 
-
-    program solid(
-        "shaders/solid.vs", "shaders/solid.fs",
-        {{"position", position}, {"color", color}}
+    unique_shader fragment_utils = compile_shader(
+        GL_FRAGMENT_SHADER, "shaders/utils.fs"
     );
 
-    draw_call mesh_draw_call{&mesh, solid, GL_TRIANGLES};
+    unique_program solid = compile_program(
+        "shaders/solid.vs", nullptr, nullptr, nullptr, "shaders/solid.fs",
+        {fragment_utils.get_name()},
+        {{"position", position}, {"color", color}}, {}
+    );
+
+    draw_call mesh_draw_call{&mesh, solid.get_name(), GL_TRIANGLES};
 
 
     composition composition;

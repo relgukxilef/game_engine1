@@ -10,94 +10,93 @@ namespace ge1 {
 
     using namespace std::literals::string_literals;
 
-    struct shader {
-        shader() : name(0) {}
+    GLuint compile_shader_from_source(GLenum type, const char* source_code) {
+        GLuint name = glCreateShader(type);
+        glShaderSource(name, 1, &source_code, nullptr);
+        glCompileShader(name);
 
-        shader(GLenum type, const char *path) {
-            std::ifstream file(path);
+        GLint success;
+        GLchar info_log[1024];
+        glGetShaderiv(name, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(name, 1024, nullptr, info_log);
+            glDeleteShader(name);
+            throw std::runtime_error(std::string(info_log));
+        }
 
-            if (!file.is_open()) {
-                throw std::runtime_error("Couldn't open "s + path);
-            }
+        return name;
+    }
 
-            std::string source(
-                (std::istreambuf_iterator<char>(file)),
-                std::istreambuf_iterator<char>()
+    GLuint compile_shader(GLenum type, const char* path) {
+        std::ifstream file(path);
+
+        if (!file.is_open()) {
+            throw std::runtime_error("Couldn't open "s + path);
+        }
+
+        std::string source(
+            (std::istreambuf_iterator<char>(file)),
+            std::istreambuf_iterator<char>()
+        );
+        file.close();
+
+        char const* source_c_str = source.c_str();
+
+        try {
+            return compile_shader_from_source(type, source_c_str);
+        } catch (std::runtime_error e) {
+            throw std::runtime_error(
+                "Could not compile "s + path + "\n"s + e.what()
             );
-            file.close();
-
-            char const* source_c_str = source.c_str();
-            GLint length = static_cast<GLint>(source.length());
-
-            name = glCreateShader(type);
-            glShaderSource(name, 1, &source_c_str, &length);
-            glCompileShader(name);
-
-            GLint success;
-            GLchar info_log[1024];
-            glGetShaderiv(name, GL_COMPILE_STATUS, &success);
-            if (!success) {
-                glGetShaderInfoLog(name, 1024, nullptr, info_log);
-                glDeleteShader(name);
-                throw std::runtime_error(
-                    "Compilation of "s + path + " failed:\n" + info_log
-                );
-            }
         }
+    }
 
-        shader(shader&& other) {
-            if (name != 0) {
-                glDeleteShader(name);
-            }
-            name = other.name;
-            other.name = 0;
-        }
-
-        ~shader() {
-            if (name != 0) {
-                glDeleteShader(name);
-            }
-        }
-
-        GLuint name;
-    };
-
-    GLuint compile_program(
-        const char* vertex_shader,
+    GLuint compile_program(const char* vertex_shader,
         const char* tesselation_control_shader,
         const char* tesselation_evaluation_shader,
         const char* geometry_shader,
         const char* fragment_shader,
-        std::initializer_list<std::pair<const char*, GLuint>> arguments
+        span<GLuint> libraries,
+        span<attribute_parameter> attributes,
+        span<uniform_parameter> uniforms
     ) {
-        shader shaders[5] = {
-            {GL_VERTEX_SHADER, vertex_shader},
+        unique_shader shaders[5] = {
+            vertex_shader == nullptr ?
+                0 : compile_shader(GL_VERTEX_SHADER, vertex_shader),
             tesselation_control_shader == nullptr ?
-                shader() :
-                shader(GL_TESS_CONTROL_SHADER, tesselation_control_shader),
+                0 : compile_shader(
+                    GL_TESS_CONTROL_SHADER, tesselation_control_shader
+                ),
             tesselation_evaluation_shader == nullptr ?
-                shader() :
-                shader(
-                    GL_TESS_EVALUATION_SHADER,
-                    tesselation_evaluation_shader
+                0 : compile_shader(
+                    GL_TESS_EVALUATION_SHADER, tesselation_evaluation_shader
                 ),
             geometry_shader == nullptr ?
-                shader() :
-                shader(GL_GEOMETRY_SHADER, geometry_shader),
-            {GL_FRAGMENT_SHADER, fragment_shader}
+                0 : compile_shader(GL_GEOMETRY_SHADER, geometry_shader),
+            fragment_shader == nullptr ?
+                0 : compile_shader(GL_FRAGMENT_SHADER, fragment_shader)
         };
 
         GLuint name = glCreateProgram();
 
         for (auto& s : shaders) {
-            if (s.name != 0) {
-                glAttachShader(name, s.name);
+            if (s.get_name() != 0) {
+                glAttachShader(name, s.get_name());
             }
         }
 
-        for (auto& argument : arguments) {
-            glBindAttribLocation(
-                name, std::get<1>(argument), std::get<0>(argument));
+        for (GLuint s : libraries) {
+            if (s != 0) {
+                glAttachShader(name, s);
+            }
+        }
+
+        for (auto& attribute : attributes) {
+            glBindAttribLocation(name, attribute.location, attribute.name);
+        }
+
+        for (auto& uniform : uniforms) {
+            *uniform.location = glGetUniformLocation(name, uniform.name);
         }
 
         glLinkProgram(name);
@@ -108,12 +107,12 @@ namespace ge1 {
         if (!success) {
             glGetProgramInfoLog(name, 1024, nullptr, info_log);
             glDeleteProgram(name);
-            throw std::runtime_error("Shader linking failed:\n"s + info_log);
+            throw std::runtime_error("Linking failed:\n"s + info_log);
         }
 
         for (auto& s : shaders) {
-            if (s.name != 0) {
-                glDetachShader(name, s.name);
+            if (s.get_name() != 0) {
+                glDetachShader(name, s.get_name());
             }
         }
 

@@ -3,12 +3,19 @@
 #include <boost/range/adaptor/reversed.hpp>
 
 #include "vertex_buffer.h"
+#include "resources.h"
 
 using namespace boost::intrusive;
 using namespace boost::adaptors;
 using namespace std;
 
 namespace ge1 {
+
+    void delete_vbo(GLuint vbo) {
+        glDeleteBuffers(1, &vbo);
+    }
+
+    typedef unique_object<delete_vbo> unique_vbo;
 
     slist<vertex_attribute_pack> concat(
         initializer_list<vertex_attribute_pack_vector*> packs
@@ -78,7 +85,7 @@ namespace ge1 {
 
             for (auto& pack : get_attribute_packs()) {
                 unique_vbo temp;
-                glBindBuffer(GL_COPY_WRITE_BUFFER, temp);
+                glBindBuffer(GL_COPY_WRITE_BUFFER, temp.get_name());
                 glBufferData(
                     GL_COPY_WRITE_BUFFER, pack.get_stride() * capacity,
                     nullptr,

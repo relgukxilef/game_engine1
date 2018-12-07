@@ -32,8 +32,10 @@ HEADERS += \
     typed/vertex_array.h \
     typed/primitive_types.h \
     typed/glm_types.h \
-    vertex_vector.h
+    vertex_vector.h \
+    span.h
 
 DISTFILES += \
     shaders/solid.fs \
-    shaders/solid.vs
+    shaders/solid.vs \
+    shaders/utils.fs
