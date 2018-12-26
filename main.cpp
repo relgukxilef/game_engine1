@@ -6,12 +6,9 @@
 #include <glm/glm.hpp>
 
 #include "composition.h"
-#include "typed/vertex_array.h"
-#include "vertex_vector.h"
 #include "resources.h"
 #include "draw_call.h"
 #include "program.h"
-#include "vertex_buffer.h"
 #include "typed/glm_types.h"
 
 using namespace std;
@@ -50,29 +47,42 @@ int main() {
         return -1;
     }
 
-    typed::vertex_attribute<glm::vec3, 0> position{GL_FALSE};
-    typed::vertex_attribute<glm::vec3, 12> color{GL_FALSE};
+    GLuint shape_buffer, color_buffer;
 
-    vertex_attribute_pack_vector mesh_data{{&position, &color}};
+    enum attributes : GLuint {
+        position, color
+    };
 
-    vertex_vector mesh{&mesh_data};
+    unique_vertex_array mesh = create_vertex_array(4, {
+        {{
+            {position, 3, GL_FLOAT, GL_FALSE, 0},
+        }, 3 * sizeof(float), GL_STATIC_DRAW, &shape_buffer},
+        {{
+            {color, 3, GL_FLOAT, GL_FALSE, 0},
+        }, 3 * sizeof(float), GL_STATIC_DRAW, &color_buffer},
+    });
 
-    vertex_buffer buffer(mesh, 6);
+    float positions[] = {
+        -1, -1, 0,
+        -1, 1, 0,
+        1, -1, 0,
+        1, 1, 0
+    };
+    float colors[] = {
+        1, 0, 1,
+        0, 1, 1,
+        1, 1, 0,
+        1, 1, 1,
+    };
 
-    position(buffer[0]) = {-1, -1, 0};
-    color(buffer[0]) = {0, 0, 1};
-    position(buffer[1]) = {1, -1, 0};
-    color(buffer[1]) = {1, 0, 1};
-    position(buffer[2]) = {-1, 1, 0};
-    color(buffer[2]) = {0, 1, 1};
-    position(buffer[3]) = {-1, 1, 0};
-    color(buffer[3]) = {0, 1, 1};
-    position(buffer[4]) = {1, -1, 0};
-    color(buffer[4]) = {1, 0, 1};
-    position(buffer[5]) = {1, 1, 0};
-    color(buffer[5]) = {1, 1, 1};
-
-    mesh.push_back(buffer);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, shape_buffer);
+    glBufferSubData(
+        GL_COPY_WRITE_BUFFER, 0, 4 * 3 * sizeof(float), positions
+    );
+    glBindBuffer(GL_COPY_WRITE_BUFFER, color_buffer);
+    glBufferSubData(
+        GL_COPY_WRITE_BUFFER, 0, 4 * 3 * sizeof(float), colors
+    );
 
     unique_shader fragment_utils = compile_shader(
         GL_FRAGMENT_SHADER, "shaders/utils.fs"
@@ -84,7 +94,9 @@ int main() {
         {{"position", position}, {"color", color}}, {}
     );
 
-    draw_call mesh_draw_call{&mesh, solid.get_name(), GL_TRIANGLES};
+    draw_call mesh_draw_call{
+        mesh.get_name(), 0, 4, solid.get_name(), GL_TRIANGLE_STRIP
+    };
 
 
     composition composition;
@@ -113,6 +125,5 @@ int main() {
         glfwPollEvents();
     }
 
-    cout << "Hello World!" << endl;
     return 0;
 }

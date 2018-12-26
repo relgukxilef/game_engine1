@@ -1,98 +1,48 @@
-vertex_buffer<Type Container::*... Members>
-    list of types, their strides and offsets
-    name of a VBO
-    functions to write Container objects into the VBO
-    
-    TODO: should this object really own the VBO? It is fine for now.
-    Uploading random data may be difficult if we allow arbitrary strides and offsets
-    Maybe have a separate struct_buffer class
 
-vertex_array<class... Attributes>
-    a mapping between one or multiple vertex_buffers and a program
-    list of attributes, their VBO, types, offsets and indices
-    name of a VAO
-    
-    VBO names can only be known at runtime
-    ideally we can use the member pointers of vertex_buffers to specify the mapping
-    
-mesh<class... Attributes>
-    index of first primtive
-    number of primitives
-    
-program<class... Attributes, class... Uniforms>
-    list of shaders
-    list of typed uniforms and their locations
-    list of typed attributes and their indices
-    can be called with parameters and a vertex array that fit the uniforms and attributes
-    
-instance<program<class... Attributes, class... Uniforms>>
-    represents an instance in OpenGL
-    program specific values for attributes
-    offset into SSB with instance data
-    setters for Attributes write into SSB
-    
-    TODO: is it possible to allow changing instance data without requiring instance to store a pointer to the multi_draw_arrays_indirect_call it is in?
-    Just implement it as linked list for now.
-    
-multi_draw_arrays_indirect_call<program<class... Attributes, class... Uniforms>> : renderable
-    name of a VBO holding an array of DrawCommands
-    values for Uniforms
-    name of a VAO
-    
-    The advantage of sharing VAOs between calls is small. It's easier to have each call manage a unique VAO.
-    
-object
-    knows the number and type of its calls
-    given an object we want to be able to edit its calls
-    destroying an object should also destroy its calls
-        this could require re-ordering instances of the same mesh to keep them packed
-        we need to be able to change the offset of an instance in an object given another object with an instance to the same program
-        
-pass
-    a composition consists of passes in a certain order
-    destroying a pass should remove it from the composition
-    the parameters of passes will rarely change
-    it doesn't really matter where in memory they are stored
-    
-    if the composition only stores pointers to the pass objects, passes could just as well form a linked list
-    
+VAO stores list of attributes and their VBOs and indirect buffers
 
-it would be cool if we could have exactly one call to glMultiDrawArraysIndirect per program and pass combination
-calls become instances of their mesh
-instances of a mesh should be packed, other data doesn't have to
+Different program calls can share VAOs.
+Different VAOs can share VBOs. Primarily, different VAOs may use the same attributes but different indirect buffers.
+Element buffers have low priority.
+Primitive arrays may not share attributes.
+Attribute packs can be introduced later.
+Since increasing the size of a buffer requires updating the VAO it is not supported by the low level objects. The objects have to be re-created.
+Low-level objects should put no limitations on its parameters. E.g. instead of requiring a slist of attributes it should only require the parameters needed to create a VAO. Higher-level objects can create temporary objects to fill the parameters of low-level ones or implement the low-level functionality themselves.
 
-order:
-    for each pass
-        for each program
-            set pass information in program
-            for each call
-                set call information and VAO
-                glMultiDrawArraysIndirect
-                //for each draw command
-                //    for each instance
-                
-data:
-    pass-specific data
-        passed as uniforms
-        contains
-            projection and view matrices
-    call-specific data
-        passed as uniforms
-        contains
-            textures
-    instance-specific data
-        passed as vertex attribute with divisor 1
-        contains
-            model matrix
-    vertex-specific data
-        passed as vertex attribute
-        contains
-            positions, normals, uvs
-                
-                
-solutions
-    call objects store pointers to the call_list they are in so they can remove themselv on destruction
-    
-    call names are just indices into a list that stores the indices of the packed data
-        maybe this can be done with an index buffer (doesn't look like that's the case)
-        
+A primitive_array should be able to store different meshes. Where are the primitive ranges belonging to a mesh stored? Adding primitives to a mesh requires updating all its occurences in indirect buffers. This shouldn't be handled by the low-level objects.
+The indirect buffer is a kind of attribute array too but with a fixed format. It would be nice if it could be accessed with the same API.
+How can a API using structs be implemented? It would be nice if we could avoid creating attribute values as they are implicitly known through the struct. Having attributes be virtual should be avoided too. The *vertex_array objects need to know the attribute properties to create the VAO. The attributes could be stored on the heap instead. This may need slightly less memory and dynamic allocations aren't that expensive for something that is only allocated once.
+
+
+
+attribute_pack
+    vbo
+    stride
+    attributes[]
+        offset
+
+    upload(first, span data)
+
+attribute_array
+    size (const)
+    attribute_packs[]
+
+primitive_array
+    allows copying primitives into the VBOs
+
+    GLenum type
+    attribute_array
+
+vertex_array
+    primitive_array
+    first
+    count
+    unique_vao
+
+indirect_vertex_array
+    primitive_array primitives
+    attribute_array instances
+    indirect_buffer
+    first
+    count
+    unique_vao

@@ -57,8 +57,8 @@ namespace ge1 {
         const char* geometry_shader,
         const char* fragment_shader,
         span<GLuint> libraries,
-        span<attribute_parameter> attributes,
-        span<uniform_parameter> uniforms
+        span<program_attribute_parameter> attributes,
+        span<program_uniform_parameter> uniforms
     ) {
         unique_shader shaders[5] = {
             vertex_shader == nullptr ?

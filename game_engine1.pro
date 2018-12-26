@@ -14,9 +14,7 @@ SOURCES += \
     composition.cpp \
     program.cpp \
     draw_call.cpp \
-    vertex_array.cpp \
-    vertex_buffer.cpp \
-    vertex_vector.cpp
+    vertex_array.cpp
 
 HEADERS += \
     pass.h \
@@ -27,12 +25,9 @@ HEADERS += \
     resources.h \
     vertex_attribute_struct.h \
     draw_call.h \
-	vertex_buffer.h \
 	typed/interfaces.h \
-    typed/vertex_array.h \
     typed/primitive_types.h \
     typed/glm_types.h \
-    vertex_vector.h \
     span.h
 
 DISTFILES += \

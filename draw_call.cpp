@@ -2,15 +2,19 @@
 
 namespace ge1 {
 
-    draw_call::draw_call(vertex_array* data, GLuint program, GLenum mode) :
-        data(data), program(program), mode(mode)
+    draw_call::draw_call(
+        GLuint vertex_array, GLint first, GLint count,
+        GLuint program, GLenum mode
+    ) :
+        vertex_array(vertex_array), first(first), count(count),
+        program(program), mode(mode)
     {
     }
 
     void draw_call::render() {
         glUseProgram(program);
-        glBindVertexArray(data->get_vao());
-        glDrawArrays(mode, data->get_first(), data->get_count());
+        glBindVertexArray(vertex_array);
+        glDrawArrays(mode, first, count);
     }
 
 }

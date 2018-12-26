@@ -9,11 +9,16 @@
 namespace ge1 {
 
     struct draw_call : public renderable {
-        draw_call(vertex_array* data, GLuint program, GLenum mode);
+        draw_call(
+            GLuint vertex_array, GLint first, GLint count,
+            GLuint program, GLenum mode
+        );
 
         void render() override;
 
-        vertex_array* data;
+        GLuint vertex_array;
+        GLint first;
+        GLint count;
         GLuint program;
         GLenum mode;
     };

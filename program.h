@@ -1,5 +1,4 @@
-#ifndef PROGRAM_H
-#define PROGRAM_H
+#pragma once
 
 #include <initializer_list>
 #include <utility>
@@ -25,12 +24,12 @@ namespace ge1 {
     GLuint compile_shader(GLenum type, const char* path);
     GLuint compile_shader_from_source(GLenum type, const char* source_code);
 
-    struct attribute_parameter {
+    struct program_attribute_parameter {
         const char* name;
         GLuint location;
     };
 
-    struct uniform_parameter {
+    struct program_uniform_parameter {
         const char* name;
         GLint* location;
     };
@@ -42,9 +41,7 @@ namespace ge1 {
         const char* geometry_shader,
         const char* fragment_shader,
         span<GLuint> libraries,
-        span<attribute_parameter> attributes,
-        span<uniform_parameter> uniforms
+        span<program_attribute_parameter> attributes,
+        span<program_uniform_parameter> uniforms
     );
 }
-
-#endif // PROGRAM_H
