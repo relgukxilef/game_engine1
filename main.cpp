@@ -20,11 +20,22 @@ void window_size_callback(GLFWwindow*, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-int main() {
-    GLFWwindow* window;
+struct unique_glfw {
+    unique_glfw() {
+        if (!glfwInit()) {
+            throw runtime_error("Couldn't initialize GLFW!");
+        }
+    }
 
-    if (!glfwInit())
-        return -1;
+    ~unique_glfw() {
+        glfwTerminate();
+    }
+};
+
+int main() {
+    unique_glfw glfw;
+
+    GLFWwindow* window;
 
     glfwWindowHint(GLFW_SAMPLES, 16);
     glfwSwapInterval(1);
@@ -37,7 +48,6 @@ int main() {
         screen_width, screen_height, "demo", nullptr, nullptr
     );
     if (!window) {
-        glfwTerminate();
         return -1;
     }
 
