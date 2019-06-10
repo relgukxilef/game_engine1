@@ -34,14 +34,13 @@ namespace ge1 {
         GLint* location;
     };
 
-    GLuint compile_program(
-        const char* vertex_shader,
+    GLuint compile_program(const char* vertex_shader,
         const char* tesselation_control_shader,
         const char* tesselation_evaluation_shader,
         const char* geometry_shader,
         const char* fragment_shader,
-        span<GLuint> libraries,
-        span<program_attribute_parameter> attributes,
-        span<program_uniform_parameter> uniforms
+        span<const GLuint> libraries,
+        span<const program_attribute_parameter> attributes,
+        span<const program_uniform_parameter> uniforms
     );
 }

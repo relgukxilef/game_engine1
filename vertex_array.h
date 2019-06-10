@@ -40,21 +40,21 @@ namespace ge1 {
     };
 
     struct attribute_pack_parameter {
-        span<attribute_parameter> attributes;
+        span<const attribute_parameter> attributes;
         GLuint stride;
         GLenum usage;
         GLuint *vertex_buffer;
     };
 
     GLuint create_vertex_array(
-        span<attribute_pointer_parameter> attributes,
+        span<const attribute_pointer_parameter> attributes,
         GLuint element_array_buffer = 0,
         GLuint draw_indirect_buffer = 0
     );
 
     GLuint create_vertex_array(
         unsigned int vertex_capacity,
-        span<attribute_pack_parameter> attribute_packs,
+        span<const attribute_pack_parameter> attribute_packs,
         unsigned int draw_indirect_capacity = 0,
         GLuint* draw_indirect_buffer = nullptr,
         GLenum draw_indirect_usage = GL_DYNAMIC_DRAW
