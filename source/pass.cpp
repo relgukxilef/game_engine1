@@ -1,4 +1,4 @@
-#include "pass.h"
+#include "../include/ge1/pass.h"
 
 namespace ge1 {
 

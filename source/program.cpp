@@ -1,5 +1,5 @@
 
-#include "program.h"
+#include "../include/ge1/program.h"
 
 #include <iostream>
 #include <fstream>

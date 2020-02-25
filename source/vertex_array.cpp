@@ -1,4 +1,4 @@
-#include "vertex_array.h"
+#include "../include/ge1/vertex_array.h"
 
 namespace ge1 {
 

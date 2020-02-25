@@ -1,4 +1,4 @@
-#include "composition.h"
+#include "../include/ge1/composition.h"
 
 namespace ge1 {
 
