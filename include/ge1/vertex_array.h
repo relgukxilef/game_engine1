@@ -46,17 +46,35 @@ namespace ge1 {
         GLuint *vertex_buffer;
     };
 
+    struct command_parameter {
+        GLuint vertex_capacity, instance_capacity;
+        GLuint *mesh, *instances;
+    };
+
+    // TODO: allow integer attributes (glVertexAttribIPointer)
     GLuint create_vertex_array(
         span<const attribute_pointer_parameter> attributes,
         GLuint element_array_buffer = 0,
         GLuint draw_indirect_buffer = 0
     );
 
+    // TODO: allow sharing of attributes between packs
     GLuint create_vertex_array(
         unsigned int vertex_capacity,
         span<const attribute_pack_parameter> attribute_packs,
+        unsigned int element_capacity = 0,
+        GLuint* element_array_buffer = nullptr,
+        GLenum element_array_type = GL_UNSIGNED_INT,
+        GLenum element_array_usage = GL_DYNAMIC_DRAW,
         unsigned int draw_indirect_capacity = 0,
         GLuint* draw_indirect_buffer = nullptr,
+        GLenum draw_indirect_usage = GL_DYNAMIC_DRAW
+    );
+
+    GLuint create_vertex_array(
+        span<const attribute_pack_parameter> vertex_attribute_packs,
+        span<const attribute_pack_parameter> instance_attribute_packs,
+        span<const command_parameter> commands, GLuint* draw_indirect_buffer,
         GLenum draw_indirect_usage = GL_DYNAMIC_DRAW
     );
 }
