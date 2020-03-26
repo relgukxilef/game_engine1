@@ -1,5 +1,4 @@
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#pragma once
 
 #include <array>
 
@@ -111,5 +110,3 @@ namespace ge1 {
     }
 
 }
-
-#endif // RESOURCES_H

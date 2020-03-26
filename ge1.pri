@@ -9,7 +9,8 @@ SOURCES += \
     $$SOURCE_ROOT/composition.cpp \
     $$SOURCE_ROOT/program.cpp \
     $$SOURCE_ROOT/draw_call.cpp \
-    $$SOURCE_ROOT/vertex_array.cpp
+    $$SOURCE_ROOT/vertex_array.cpp \
+    $$SOURCE_ROOT/framebuffer.cpp
 
 HEADERS += \
     $$INCLUDE_ROOT/geometry/primitives.h \
@@ -20,4 +21,5 @@ HEADERS += \
     $$INCLUDE_ROOT/vertex_array.h \
     $$INCLUDE_ROOT/renderable.h \
     $$INCLUDE_ROOT/resources.h \
-    $$INCLUDE_ROOT/span.h
+    $$INCLUDE_ROOT/span.h \
+    $$INCLUDE_ROOT/framebuffer.h
