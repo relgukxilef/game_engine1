@@ -12,6 +12,9 @@ namespace ge1 {
     }
 
     void draw_arrays_call::render() {
+        // TODO: support setting uniforms before rendering
+        // The only reason the struct exists in the first place is to support
+        // composition, which should be deleted anyway
         glUseProgram(program);
         glBindVertexArray(vertex_array);
         glDrawArrays(mode, first, count);

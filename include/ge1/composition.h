@@ -7,7 +7,7 @@
 
 namespace ge1 {
 
-    struct composition {
+    struct [[deprecated]] composition {
         composition();
 
         void render();
