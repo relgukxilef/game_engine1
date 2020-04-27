@@ -72,6 +72,7 @@ namespace ge1 {
         }
         name = other.name;
         other.name = 0;
+        return *this;
     }
 
     template<void (*Deleter)(GLuint)>
@@ -94,6 +95,7 @@ namespace ge1 {
         Deleter(Count, names);
         names = other.names;
         other.names = {0};
+        return *this;
     }
 
     template<GLsizei Count, void (*Deleter)(GLsizei, GLuint*)>
