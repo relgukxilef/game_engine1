@@ -2,6 +2,7 @@
 
 #include <initializer_list>
 #include <utility>
+#include <variant>
 
 #include <GL/glew.h>
 
@@ -32,6 +33,11 @@ namespace ge1 {
     struct program_uniform_parameter {
         const char* name;
         GLuint* location;
+    };
+
+    struct program_set_uniform_parameter {
+        const char* name;
+        std::variant<int, unsigned, float> value; // TODO
     };
 
     struct program_uniform_block_parameter {
@@ -79,6 +85,11 @@ namespace ge1 {
     void get_uniform_locations(
         GLuint program,
         span<const program_uniform_parameter> uniforms
+    );
+
+    void set_uniforms(
+        GLuint program,
+        span<const program_set_uniform_parameter> values
     );
 
     void bind_uniform_blocks(

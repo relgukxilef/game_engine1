@@ -213,4 +213,27 @@ namespace ge1 {
         }
     }
 
+    struct uniform_setter {
+        int location;
+        void operator() (float value) {
+            glUniform1f(location, value);
+        }
+        void operator() (int value) {
+            glUniform1i(location, value);
+        }
+        void operator() (unsigned value) {
+            glUniform1ui(location, value);
+        }
+        // TODO
+    };
+
+    void set_uniforms(
+        GLuint program, span<const program_set_uniform_parameter> values
+    ) {
+        for (const auto& uniform : values) {
+            auto location = glGetUniformLocation(program, uniform.name);
+            std::visit(uniform_setter{location}, uniform.value);
+        }
+    }
+
 }
