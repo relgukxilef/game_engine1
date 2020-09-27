@@ -182,7 +182,7 @@ namespace ge1 {
         for (auto& uniform_block : uniform_blocks) {
             GLuint index = glGetUniformBlockIndex(program, uniform_block.name);
             if (index > 128) {
-                throw std::runtime_error("large uniform block index");
+                throw std::runtime_error("Large uniform block index");
             }
             glUniformBlockBinding(program, index, uniform_block.binding);
         }
@@ -197,7 +197,7 @@ namespace ge1 {
                 program, GL_SHADER_STORAGE_BLOCK, shader_storage_block.name
             );
             if (index > 128) {
-                throw std::runtime_error("large shader storage block index");
+                throw std::runtime_error("Large shader storage block index");
             }
             glShaderStorageBlockBinding(
                 program, index, shader_storage_block.binding
