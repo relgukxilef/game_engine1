@@ -58,6 +58,10 @@ namespace ge1 {
         GLenum mode;
     };
 
+    struct draw_elements_indirect_command {
+        GLuint count, instance_count, first_index, base_vertex, base_instance;
+    };
+
 }
 
 #endif // DRAW_CALL_H
