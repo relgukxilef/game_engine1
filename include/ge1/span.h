@@ -10,6 +10,8 @@ namespace ge1 {
         span(unsigned size);
         span(T* begin, T* end);
         span(std::initializer_list<T> values);
+        template<class R>
+        span(const R& range);
 
         T* begin() const;
         T* end() const;
@@ -42,6 +44,10 @@ namespace ge1 {
     {}
 
     template<class T>
+    template<class R>
+    ge1::span<T>::span(const R& range) : span(&*range.begin(), &*range.end()) {}
+
+    template<class T>
     T* span<T>::begin() const {
         return begin_pointer;
     }
@@ -70,5 +76,4 @@ namespace ge1 {
     ge1::span<T>::operator span<const T>() {
         return {begin_pointer, end_pointer};
     }
-
 }
