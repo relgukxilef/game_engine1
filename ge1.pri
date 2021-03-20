@@ -5,12 +5,12 @@ INCLUDE_ROOT = $$PWD/include/ge1
 INCLUDEPATH += $$PWD/include
 
 SOURCES += \
-    $$SOURCE_ROOT/pass.cpp \
-    $$SOURCE_ROOT/composition.cpp \
-    $$SOURCE_ROOT/program.cpp \
-    $$SOURCE_ROOT/draw_call.cpp \
-    $$SOURCE_ROOT/vertex_array.cpp \
-    $$SOURCE_ROOT/framebuffer.cpp
+    $$SOURCE_ROOT/opengl/pass.cpp \
+    $$SOURCE_ROOT/opengl/composition.cpp \
+    $$SOURCE_ROOT/opengl/program.cpp \
+    $$SOURCE_ROOT/opengl/draw_call.cpp \
+    $$SOURCE_ROOT/opengl/vertex_array.cpp \
+    $$SOURCE_ROOT/opengl/framebuffer.cpp
 
 HEADERS += \
     $$INCLUDE_ROOT/geometry/primitives.h \
