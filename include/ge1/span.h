@@ -11,7 +11,7 @@ namespace ge1 {
         span(T* begin, T* end);
         span(std::initializer_list<T> values);
         template<class R>
-        span(const R& range);
+        span(const R& range); // only works with continuous ranges
 
         T* begin() const;
         T* end() const;
@@ -23,6 +23,19 @@ namespace ge1 {
         T& operator[] (unsigned index);
 
         T* begin_pointer, * end_pointer;
+    };
+
+    template<class T>
+    struct unique_span : public span<T> {
+        unique_span();
+        unique_span(unsigned size);
+        unique_span(T* begin, T* end);
+        unique_span(std::initializer_list<T> values);
+        unique_span(const unique_span<T>&) = delete;
+
+        ~unique_span();
+
+        unique_span<T>& operator=(const unique_span<T>&) = delete;
     };
 
     template<class T>
@@ -76,4 +89,28 @@ namespace ge1 {
     ge1::span<T>::operator span<const T>() {
         return {begin_pointer, end_pointer};
     }
+
+    template<class T>
+    unique_span<T>::unique_span() : span<T>() {}
+
+    template<class T>
+    unique_span<T>::unique_span(unsigned size) : span<T>(size) {}
+
+    template<class T>
+    unique_span<T>::unique_span(T* begin, T* end) :
+        span<T> (begin, end)
+    {}
+
+    template<class T>
+    unique_span<T>::unique_span(std::initializer_list<T> values) :
+        span<T> (values)
+    {}
+
+    template<class T>
+    unique_span<T>::~unique_span() {
+        if (this->begin_pointer != nullptr) {
+            delete[] this->begin_pointer;
+        }
+    }
+
 }

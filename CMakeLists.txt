@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(
-    game_engine1_opengl STATIC
+    game_engine1_opengl STATIC EXCLUDE_FROM_ALL
     source/opengl/pass.cpp
     source/opengl/composition.cpp
     source/opengl/program.cpp
@@ -23,10 +23,11 @@ add_library(
     include/ge1/resources.h
     include/ge1/span.h
     include/ge1/framebuffer.h
+    include/ge1/buffer_vector.h
 )
 
 add_library(
-    game_engine1_vulkan STATIC
+    game_engine1_vulkan STATIC EXCLUDE_FROM_ALL
     source/vulkan/shader_module.cpp
 
     include/ge1/span.h
