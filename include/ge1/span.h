@@ -36,6 +36,7 @@ namespace ge1 {
         ~unique_span();
 
         unique_span<T>& operator=(const unique_span<T>&) = delete;
+        unique_span<T>& operator=(unique_span<T>&& other);
     };
 
     template<class T>
@@ -111,6 +112,19 @@ namespace ge1 {
         if (this->begin_pointer != nullptr) {
             delete[] this->begin_pointer;
         }
+    }
+
+    template<class T>
+    unique_span<T>& unique_span<T>::operator=(unique_span<T>&& other) {
+        if (this->begin_pointer) {
+            delete[] this->begin_pointer;
+        }
+        this->begin_pointer = other.begin_pointer;
+        this->end_pointer = other.end_pointer;
+        other.begin_pointer = nullptr;
+        other.end_pointer = nullptr;
+
+        return *this;
     }
 
 }
