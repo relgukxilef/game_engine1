@@ -29,9 +29,11 @@ add_library(
 add_library(
     game_engine1_vulkan STATIC EXCLUDE_FROM_ALL
     source/vulkan/shader_module.cpp
+    source/vulkan/memory.cpp
 
     include/ge1/span.h
     include/ge1/shader_module.h
+    include/ge1/memory.h
 )
 
 target_include_directories(
