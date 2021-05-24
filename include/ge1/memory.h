@@ -9,6 +9,12 @@ namespace ge1 {
     );
 
     VkDeviceMemory allocate_memory(
+        VkDevice device, VkPhysicalDevice physical_device,
+        VkMemoryRequirements memory_requirements,
+        VkMemoryPropertyFlags memory_property_flags
+    );
+
+    VkDeviceMemory allocate_memory(
         VkDevice device, VkPhysicalDevice physical_device, VkBuffer buffer,
         VkMemoryPropertyFlags memory_property_flags
     );

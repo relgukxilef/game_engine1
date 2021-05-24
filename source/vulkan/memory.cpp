@@ -27,12 +27,10 @@ namespace ge1 {
     }
 
     VkDeviceMemory allocate_memory(
-        VkDevice device, VkPhysicalDevice physical_device, VkBuffer buffer,
+        VkDevice device, VkPhysicalDevice physical_device,
+        VkMemoryRequirements memory_requirements,
         VkMemoryPropertyFlags memory_property_flags
     ) {
-        VkMemoryRequirements memory_requirements;
-        vkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
-
         VkPhysicalDeviceMemoryProperties memory_properties;
         vkGetPhysicalDeviceMemoryProperties(
             physical_device, &memory_properties
@@ -66,6 +64,18 @@ namespace ge1 {
         }
 
         return device_memory;
+    }
+
+    VkDeviceMemory allocate_memory(
+        VkDevice device, VkPhysicalDevice physical_device, VkBuffer buffer,
+        VkMemoryPropertyFlags memory_property_flags
+    ) {
+        VkMemoryRequirements memory_requirements;
+        vkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
+
+        return allocate_memory(
+            device, physical_device, memory_requirements, memory_property_flags
+        );
     }
 
 }
