@@ -26,6 +26,10 @@ add_library(
     include/ge1/buffer_vector.h
 )
 
+target_compile_definitions(game_engine1_opengl PRIVATE GLEW_STATIC)
+
+target_link_libraries(game_engine1_opengl PRIVATE glew32s opengl32)
+
 add_library(
     game_engine1_vulkan STATIC EXCLUDE_FROM_ALL
     source/vulkan/shader_module.cpp
