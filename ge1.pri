@@ -5,6 +5,7 @@ INCLUDE_ROOT = $$PWD/include/ge1
 INCLUDEPATH += $$PWD/include
 
 SOURCES += \
+    $$SOURCE_ROOT/editor/editor_camera.cpp \
     $$SOURCE_ROOT/opengl/pass.cpp \
     $$SOURCE_ROOT/opengl/composition.cpp \
     $$SOURCE_ROOT/opengl/program.cpp \
@@ -22,4 +23,5 @@ HEADERS += \
     $$INCLUDE_ROOT/renderable.h \
     $$INCLUDE_ROOT/resources.h \
     $$INCLUDE_ROOT/span.h \
-    $$INCLUDE_ROOT/framebuffer.h
+    $$INCLUDE_ROOT/framebuffer.h \
+    $$INCLUDE_ROOT/editor/editor_camera.h
