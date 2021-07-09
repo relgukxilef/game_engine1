@@ -13,6 +13,7 @@ add_library(
     source/opengl/draw_call.cpp
     source/opengl/vertex_array.cpp
     source/opengl/framebuffer.cpp
+    source/algorithm.cpp
 
     include/ge1/pass.h
     include/ge1/composition.h
@@ -24,6 +25,7 @@ add_library(
     include/ge1/span.h
     include/ge1/framebuffer.h
     include/ge1/buffer_vector.h
+    include/ge1/algorithm.h
 )
 
 target_compile_definitions(game_engine1_opengl PRIVATE GLEW_STATIC)
