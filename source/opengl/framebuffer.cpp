@@ -1,5 +1,7 @@
 #include "../include/ge1/framebuffer.h"
 
+#include <stdexcept>
+
 namespace ge1 {
 
     GLuint create_framebuffer(

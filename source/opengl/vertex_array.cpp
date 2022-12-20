@@ -1,5 +1,7 @@
 #include "../include/ge1/vertex_array.h"
 
+#include <stdexcept>
+
 namespace ge1 {
 
     GLuint create_vertex_array(
