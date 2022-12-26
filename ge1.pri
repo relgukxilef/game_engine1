@@ -11,8 +11,7 @@ SOURCES += \
     $$SOURCE_ROOT/opengl/program.cpp \
     $$SOURCE_ROOT/opengl/draw_call.cpp \
     $$SOURCE_ROOT/opengl/vertex_array.cpp \
-    $$SOURCE_ROOT/opengl/framebuffer.cpp \
-    $$SOURCE_ROOT/editor/backends/glfw.cpp
+    $$SOURCE_ROOT/opengl/framebuffer.cpp
 
 HEADERS += \
     $$INCLUDE_ROOT/geometry/primitives.h \
@@ -27,4 +26,7 @@ HEADERS += \
     $$INCLUDE_ROOT/framebuffer.h \
     $$INCLUDE_ROOT/editor/editor_camera.h \
     $$INCLUDE_ROOT/editor/editor_io.h \
-    $$INCLUDE_ROOT/editor/backends/glfw.h
+    $$INCLUDE_ROOT/editor/backends/ge1_imgui.h \
+    $$PWD/include/ge1/editor/introspection.h \
+    $$PWD/include/ge1/editor/introspection_glm.h \
+    $$PWD/include/ge1/editor/reflection.h

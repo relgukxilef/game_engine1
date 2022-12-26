@@ -1,8 +1,7 @@
 #pragma once
 
-struct GLFWwindow;
+#include "introspection.h"
 
 namespace ge1 {
-
 
 }
