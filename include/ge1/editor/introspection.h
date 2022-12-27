@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iterator>
 
 namespace ge1 {
 
@@ -54,11 +55,31 @@ namespace ge1 {
     };
 
     template<typename Type>
+    struct pointer_accessor_t {
+        unsigned size(Type* v) const { return 1; }
+        std::unique_ptr<abstract_value> child(Type* v, unsigned index) const {
+            return std::make_unique<value<Type>>(*v);
+        }
+        const char* child_name(Type* v, unsigned index) const {
+            return "*";
+        }
+        std::string value_string(Type* v) const {
+            std::stringstream s;
+            s << v;
+            return s.str();
+        }
+    };
+
+    template<typename Type>
     struct range_accessor_t {
-        unsigned size(Type& v) const { return std::end(v) - std::begin(v); }
+        unsigned size(Type& v) const {
+            return std::distance(std::begin(v), std::end(v));
+        }
         std::unique_ptr<abstract_value> child(Type& v, unsigned index) const {
+            auto iterator = std::begin(v);
+            std::advance(iterator, index);
             return std::make_unique<value<decltype(*std::begin(v))>>(
-                *(std::begin(v) + index)
+                *iterator
             );
         }
         const char* child_name(Type& v, unsigned index) const { return nullptr; }
@@ -137,6 +158,9 @@ namespace ge1 {
 
     template<typename T>
     constexpr const auto accessor<T&> = accessor<T>;
+
+    template<typename T>
+    constexpr const pointer_accessor_t<T> accessor<T* const> = {};
 
     template<typename T>
     unsigned value<T>::size() const { return accessor<T>.size(v); }
