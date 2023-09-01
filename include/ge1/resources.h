@@ -8,6 +8,8 @@ namespace ge1 {
 
     template<void (*Deleter)(GLuint)>
     struct unique_object {
+        typedef GLuint pointer;
+
         unique_object();
         unique_object(GLuint name);
         unique_object(const unique_object&) = delete;
@@ -26,6 +28,8 @@ namespace ge1 {
 
     template<GLsizei Count, void (*Deleter)(GLsizei, GLuint*)>
     struct unique_objects {
+        typedef GLuint pointer;
+
         unique_objects();
         unique_objects(std::array<GLuint, Count> names);
         unique_objects(const unique_objects&) = delete;
@@ -40,6 +44,17 @@ namespace ge1 {
 
     private:
         std::array<GLuint, Count> names;
+    };
+
+    template<class Smart>
+    struct out_ptr {
+        out_ptr(Smart& smart);
+        ~out_ptr();
+
+        operator typename Smart::pointer*();
+
+        Smart& smart;
+        typename Smart::pointer pointer;
     };
 
 
@@ -111,4 +126,16 @@ namespace ge1 {
         other.names = {0};
     }
 
+    template<class Smart>
+    out_ptr<Smart>::out_ptr(Smart& smart) : smart(smart) {}
+
+    template<class Smart>
+    out_ptr<Smart>::~out_ptr() {
+        smart = Smart(pointer);
+    }
+
+    template<class Smart>
+    out_ptr<Smart>::operator typename Smart::pointer*() {
+        return &pointer;
+    }
 }
